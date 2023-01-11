@@ -10,10 +10,10 @@ class Piece:
     _valid_directions = []
     _infinite_range = True
 
-    def __init__(self, player: int, x: int, y: int):
+    def __init__(self, player: int, y: int, x: int):
         self.player = player
-        self.x = x
         self.y = y
+        self.x = x
     
     def __str__(self):
         return PIECES[('WHITE' if self.player == 0 else 'BLACK') + f'_{self.name}']
@@ -30,7 +30,7 @@ class Piece:
     def get_valid_moves(self, player: int, board: list[list]) -> list[tuple]:
         valid_moves = []
         for p, q in self._valid_directions:
-            i, j = self.x, self.y
+            i, j = self.y, self.x
             i, j = i + p, j + q
             if self._infinite_range:
                 while self._valid_tile(player, i, j, board):
@@ -74,7 +74,24 @@ class Bishop(Piece):
 
 class Pawn(Piece):
     name = 'PAWN'
-    # TODO - define rules for pawn
+
+    def get_valid_moves(self, player: int, board: list[list]) -> list[tuple]:
+        valid_moves = []
+        dy = (-1 if self.player == 0 else 1)
+        i, j = self.y, self.x
+        print(player)
+        print(dy)
+        print(i, j)
+        for p, q in [(dy, -1), (dy, 1)]:
+            print(p, q)
+            print(i + p, j + q)
+            if self._valid_tile(player, i + p, j + q, board) and board[i + p][j + q] != PIECES['EMPTY_TILE']:
+                valid_moves.append((i + p, j + q))
+        if self._valid_tile(player, i + 1 * dy, j, board) and board[i + 1 * dy][j] == PIECES['EMPTY_TILE']:
+            valid_moves.append((i + 1 * dy, j))
+        if (3.5 - 2.5 * dy) == i and self._valid_tile(player, i + 2 * dy, j, board) and board[i + 2 * dy][j] == PIECES['EMPTY_TILE']:
+            valid_moves.append((i + 2 * dy, j))
+        return valid_moves
 
 
 if __name__ == '__main__':

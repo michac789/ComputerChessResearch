@@ -12,28 +12,29 @@ class ChessBoard:
             Class, player, i, j = piece
             self.board[i][j] = Class(player, i, j)
     
-    def initialize_board(self):
-        for p in range(2):
-            row = 7 - 7 * p
-            row2 = 6 - 5 * p
+    def initialize_board(self) -> None:
+        for player in range(2):
+            row = 7 - 7 * player
+            row2 = 6 - 5 * player
             self._place_pieces([
-                (Rook, p, row, 0),
-                (Knight, p, row, 1),
-                (Bishop, p, row, 2),
-                (Queen, p, row, 3),
-                (King, p, row, 4),
-                (Bishop, p, row, 5),
-                (Knight, p, row, 6),
-                (Rook, p, row, 7),
-                *[(Pawn, p, row2, j) for j in range(8)],
+                (Rook, player, row, 0),
+                (Knight, player, row, 1),
+                (Bishop, player, row, 2),
+                (Queen, player, row, 3),
+                (King, player, row, 4),
+                (Bishop, player, row, 5),
+                (Knight, player, row, 6),
+                (Rook, player, row, 7),
+                *[(Pawn, player, row2, j) for j in range(8)],
             ])
 
-    def display_board(self):
+    def display_board(self) -> None:
         for i in range(8):
+            print(f'{8 - i} ', end='')
             for j in range(8):
                 print(f'{self.board[i][j]} ', end='')
             print('')
-        print('')
+        print('  A B C D E F G H')
 
     def _get_coordinate(self, msg: str='Enter tile: ', allow_exit: bool=False) -> tuple[int] | None:
         while True:
@@ -47,7 +48,7 @@ class ChessBoard:
             print('Invalid tile entered, try again!')
         return (8 - tile_x, ord(tile[0]) - 65)
 
-    def move_piece(self):
+    def move_piece(self) -> None:
         print(f"It is {('white' if self.player == 0 else 'black')}'s turn to move.")
         while True:
             y, x = chess._get_coordinate(msg='Enter your piece tile to move: ')
@@ -61,6 +62,8 @@ class ChessBoard:
                     if (p, q) in valid_moves:
                         chess.board[p][q] = chess.board[y][x]
                         chess.board[y][x] = PIECES['EMPTY_TILE']
+                        chess.board[p][q].y = p
+                        chess.board[p][q].x = q
                         self.player = (self.player + 1) % 2
                         return
                     print('Invalid tile selected, try again!')

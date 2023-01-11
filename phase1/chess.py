@@ -13,19 +13,19 @@ class ChessBoard:
             self.board[i][j] = Class(player, i, j)
     
     def initialize_board(self):
-        for i in range(2):
-            row = 7 - 7 * i
-            row2 = 6 - 5 * i
+        for p in range(2):
+            row = 7 - 7 * p
+            row2 = 6 - 5 * p
             self.place_pieces([
-                (Rook, i, row, 0),
-                (Knight, i, row, 1),
-                (Bishop, i, row, 2),
-                (Queen, i, row, 3),
-                (King, i, row, 4),
-                (Bishop, i, row, 5),
-                (Knight, i, row, 6),
-                (Rook, i, row, 7),
-                *[(Pawn, i, row2, j) for j in range(8)],
+                (Rook, p, row, 0),
+                (Knight, p, row, 1),
+                (Bishop, p, row, 2),
+                (Queen, p, row, 3),
+                (King, p, row, 4),
+                (Bishop, p, row, 5),
+                (Knight, p, row, 6),
+                (Rook, p, row, 7),
+                *[(Pawn, p, row2, j) for j in range(8)],
             ])
 
     def display_board(self):
@@ -38,6 +38,10 @@ class ChessBoard:
 if __name__ == "__main__":
     chess = ChessBoard()
     chess.initialize_board()
+    chess.display_board()
+    chess.board[4][1] = Queen(0, 4, 1)
+    a = chess.board[4][1].get_valid_moves(0, chess.board)
+    print(a)
     chess.display_board()
     print("Hello World ♟")
     print('\u25FB \u265F')

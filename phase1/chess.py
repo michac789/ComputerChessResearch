@@ -77,3 +77,12 @@ if __name__ == "__main__":
     while True:
         chess.display_board()
         chess.move_piece()
+
+'''
+    TODO
+    add winning
+    forced move when king in check
+    add castling feature
+    add en passant
+    add pawn promotion
+'''

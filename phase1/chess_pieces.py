@@ -79,12 +79,7 @@ class Pawn(Piece):
         valid_moves = []
         dy = (-1 if self.player == 0 else 1)
         i, j = self.y, self.x
-        print(player)
-        print(dy)
-        print(i, j)
         for p, q in [(dy, -1), (dy, 1)]:
-            print(p, q)
-            print(i + p, j + q)
             if self._valid_tile(player, i + p, j + q, board) and board[i + p][j + q] != PIECES['EMPTY_TILE']:
                 valid_moves.append((i + p, j + q))
         if self._valid_tile(player, i + 1 * dy, j, board) and board[i + 1 * dy][j] == PIECES['EMPTY_TILE']:
@@ -92,13 +87,3 @@ class Pawn(Piece):
         if (3.5 - 2.5 * dy) == i and self._valid_tile(player, i + 2 * dy, j, board) and board[i + 2 * dy][j] == PIECES['EMPTY_TILE']:
             valid_moves.append((i + 2 * dy, j))
         return valid_moves
-
-
-if __name__ == '__main__':
-    x = Queen(0, 7, 3)
-    print(x)
-    # print(x.get_valid_moves(1, []))
-    print(x.player)
-    print(x.x)
-    print(x.y)
-    print('hello \u25FB')

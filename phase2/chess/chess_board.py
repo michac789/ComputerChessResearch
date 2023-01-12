@@ -79,6 +79,17 @@ class ChessBoard:
         return (self.board[i][j] != PIECES['EMPTY_TILE'] and
             self.board[i][j].player == self.player)
 
+    '''
+    Given a tile that you are allowed to move, return 2d list of booleans,
+    True means you can move move the piece here, otherwise False
+    '''
+    def get_valid_moves_list(self, i, j) -> list[list[bool]]:
+        ret_list = [[False for _ in range(8)] for _ in range(8)]
+        moves = self.board[i][j].get_valid_moves(self.player, self.board)
+        for move in moves:
+            ret_list[move[0]][move[1]] = True
+        return ret_list
+
 
 if __name__ == "__main__":
     chess = ChessBoard()

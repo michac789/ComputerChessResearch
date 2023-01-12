@@ -29,3 +29,19 @@ PIECES = {
     'BLACK_PAWN': 'BP',
     'EMPTY_TILE': 'ET',
 }
+
+MAPPING = {
+    'WK': 1,
+    'WQ': 2,
+    'WB': 3,
+    'WN': 4,
+    'WR': 5,
+    'WP': 6,
+    'BK': 7,
+    'BQ': 8,
+    'BB': 9,
+    'BN': 10,
+    'BR': 11,
+    'BP': 12,
+    'ET': -1,
+}

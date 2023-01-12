@@ -1,4 +1,4 @@
-from chess_pieces import Piece, King, Queen, Rook, Knight, Bishop, Pawn
+from chess.chess_pieces import Piece, King, Queen, Rook, Knight, Bishop, Pawn
 from chess.chess_constants import PIECES
 
 
@@ -6,6 +6,9 @@ class ChessBoard:
     def __init__(self):
         self.board = [[PIECES['EMPTY_TILE'] for _ in range(8)] for _ in range(8)]
         self.player = 0
+    
+    def __repr__(self):
+        return self.board
     
     def _place_pieces(self, pieces: list[tuple[Piece, int, int, int]]):
         for piece in pieces:

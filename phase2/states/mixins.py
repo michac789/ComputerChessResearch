@@ -2,6 +2,16 @@ import pygame
 
 
 '''
+    TextsMixin provide method to easily add multiple texts on different coordinates.
+'''
+class TextsMixin:
+    def _display_texts(self, surf: pygame.surface, texts: list[tuple[str, type, type, int, int]]):
+        for text in texts:
+            new_text = text[1].render(text[0], True, text[2])
+            surf.blit(new_text, (text[3], text[4]))
+
+
+'''
     ButtonsMixin provides several methods to efficiently create buttons,
     with hover effects and clicking functionality.
 '''

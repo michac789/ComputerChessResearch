@@ -17,13 +17,13 @@ class BaseState:
             'screen_height': self.params['screen_height'],
         }
     
-    def get_event(self, event):
+    def get_event(self, event: pygame.event):
         self.mouse_pos = pygame.mouse.get_pos()
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.change_state = 'quit'
     
-    def update(self, dt):
+    def update(self, dt: float):
         self.time_elapsed += dt
     
-    def draw(self, screen):
+    def draw(self, screen: pygame.surface):
         screen.fill(pygame.Color('black'))

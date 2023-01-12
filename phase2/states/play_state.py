@@ -12,7 +12,6 @@ class PlayState(ButtonsMixin, BaseState):
         self._initialize_buttons(['Reset Board', 'Main Menu'])
         self._generate_quads()
         self._cb = ChessBoard()
-        self._cb.initialize_board()
         self._tiles = []
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         self._selected_tile = None
@@ -84,8 +83,6 @@ class PlayState(ButtonsMixin, BaseState):
                     screen.blit(self._img, (start_x, start_y), self._sprite_sheet[sprite_key])
                 row_tiles.append(rect)
             self._tiles.append(row_tiles)
-    
-
     
     def _display_buttons(self, screen):
         BUTTON_WIDTH = self.params['screen_width'] * (1 / 5)

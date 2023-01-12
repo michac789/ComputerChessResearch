@@ -14,22 +14,6 @@ class ChessBoard:
         for piece in pieces:
             Class, player, i, j = piece
             self.board[i][j] = Class(player, i, j)
-    
-    def initialize_board(self) -> None:
-        for player in range(2):
-            row = 7 - 7 * player
-            row2 = 6 - 5 * player
-            self._place_pieces([
-                (Rook, player, row, 0),
-                (Knight, player, row, 1),
-                (Bishop, player, row, 2),
-                (Queen, player, row, 3),
-                (King, player, row, 4),
-                (Bishop, player, row, 5),
-                (Knight, player, row, 6),
-                (Rook, player, row, 7),
-                *[(Pawn, player, row2, j) for j in range(8)],
-            ])
 
     def display_board(self) -> None:
         for i in range(8):
@@ -71,6 +55,27 @@ class ChessBoard:
     #                     return
     #                 print('Invalid tile selected, try again!')
     #         print('Invalid piece selected, try again!')
+
+    '''
+    Setup starting position of chess board, white moves first.
+    '''
+    def initialize_board(self) -> None:
+        self.board = [[PIECES['EMPTY_TILE'] for _ in range(8)] for _ in range(8)]
+        for player in range(2):
+            row = 7 - 7 * player
+            row2 = 6 - 5 * player
+            self._place_pieces([
+                (Rook, player, row, 0),
+                (Knight, player, row, 1),
+                (Bishop, player, row, 2),
+                (Queen, player, row, 3),
+                (King, player, row, 4),
+                (Bishop, player, row, 5),
+                (Knight, player, row, 6),
+                (Rook, player, row, 7),
+                *[(Pawn, player, row2, j) for j in range(8)],
+            ])
+        self.player = 0
 
     '''
     Return True if you select your own piece, otherwise false.

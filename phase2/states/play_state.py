@@ -8,6 +8,7 @@ class PlayState(BaseState):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._initialize_board_sizes()
+        self._initialize_buttons()
         self._generate_quads()
         self._cb = ChessBoard()
         self._cb.initialize_board()
@@ -25,6 +26,11 @@ class PlayState(BaseState):
         self._tile_size = int(min(self._board_width / self._dim_width, self._board_height / self._dim_height))
         self._board_start = (self._board_padding, self._board_padding)
     
+    def _initialize_buttons(self):
+        self._button_options = ['Reset Board', 'Main Menu']
+        self._button_dict = {}
+        self._button_hover = [False for _ in range(3)]
+    
     def _generate_quads(self):
         self._sprite_sheet = {}
         SPRITE_SHEET_PATH = os.path.join('assets', 'chess_sprite_sheet.png')
@@ -35,8 +41,7 @@ class PlayState(BaseState):
             for j in range(6):
                 self._sprite_sheet[i * 6 + j + 1] = (t * j, t * i, t, t)
     
-    def get_event(self, event):
-        super().get_event(event)
+    def _get_event_board(self, event):
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         for i in range(self._dim_height):
             for j in range(self._dim_width):
@@ -53,6 +58,22 @@ class PlayState(BaseState):
                         self._cb.move_piece(*self._selected_tile, i, j)
                         self._selected_tile = None
                         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
+    
+    def _get_event_buttons(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self._button_dict[0].collidepoint(self.mouse_pos):
+                self._cb.initialize_board()
+            elif self._button_dict[1].collidepoint(self.mouse_pos):
+                self.change_state = 'menu'
+        for i in range(len(self._button_dict)):
+            self._button_hover[i] = False
+            if self._button_dict[i].collidepoint(self.mouse_pos):
+                self._button_hover[i] = True
+
+    def get_event(self, event):
+        super().get_event(event)
+        self._get_event_board(event)
+        self._get_event_buttons(event)
     
     def _draw_chess_board(self, screen):
         self._tiles = []
@@ -75,7 +96,24 @@ class PlayState(BaseState):
                     screen.blit(self._img, (start_x, start_y), self._sprite_sheet[sprite_key])
                 row_tiles.append(rect)
             self._tiles.append(row_tiles)
+    
+    def _display_buttons(self, screen):
+        BUTTON_WIDTH = self.params['screen_width'] * (1 / 5)
+        BUTTON_HEIGHT = self.params['screen_height'] * (1 / 8)
+        START_X = (self.params['screen_width'] - BUTTON_WIDTH) * (11 / 16)
+        START_Y = (self.params['screen_height'] - BUTTON_HEIGHT) * (9 / 10)
+        for i, option in enumerate(self._button_options):
+            START_X = START_X + i * BUTTON_WIDTH * 1.1
+            button_rect = pygame.Rect(START_X, START_Y, BUTTON_WIDTH, BUTTON_HEIGHT)
+            button_text = self.small_font.render(option, True,
+                (pygame.Color('black') if not self._button_hover[i] else pygame.Color('magenta')))
+            self._button_dict[i] = button_rect
+            button_text_rect = button_text.get_rect()
+            button_text_rect.center = button_rect.center
+            pygame.draw.rect(screen, pygame.Color('yellow'), button_rect)
+            screen.blit(button_text, button_text_rect)
         
     def draw(self, screen):
         screen.fill(pygame.Color((255, 153, 102)))
         self._draw_chess_board(screen)
+        self._display_buttons(screen)

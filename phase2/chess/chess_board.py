@@ -51,26 +51,26 @@ class ChessBoard:
             print('Invalid tile entered, try again!')
         return (8 - tile_x, ord(tile[0]) - 65)
 
-    def move_piece(self) -> None:
-        print(f"It is {('white' if self.player == 0 else 'black')}'s turn to move.")
-        while True:
-            y, x = chess._get_coordinate(msg='Enter your piece tile to move: ')
-            if self.board[y][x] != PIECES['EMPTY_TILE'] and self.board[y][x].player == self.player:
-                while True:
-                    valid_moves = self.board[y][x].get_valid_moves(self.player, self.board)
-                    print(f'valid moves: {valid_moves}')
-                    print(f'valid moves: {"".join(chr(move[1] + 65) + str(8 - move[0]) + " " for move in valid_moves)}')
-                    p, q = chess._get_coordinate(msg='Enter valid tile to move this piece: (type -1 to cancel) ', allow_exit=True)
-                    if not p: break
-                    if (p, q) in valid_moves:
-                        chess.board[p][q] = chess.board[y][x]
-                        chess.board[y][x] = PIECES['EMPTY_TILE']
-                        chess.board[p][q].y = p
-                        chess.board[p][q].x = q
-                        self.player = (self.player + 1) % 2
-                        return
-                    print('Invalid tile selected, try again!')
-            print('Invalid piece selected, try again!')
+    # def move_piece(self) -> None:
+    #     print(f"It is {('white' if self.player == 0 else 'black')}'s turn to move.")
+    #     while True:
+    #         y, x = chess._get_coordinate(msg='Enter your piece tile to move: ')
+    #         if self.board[y][x] != PIECES['EMPTY_TILE'] and self.board[y][x].player == self.player:
+    #             while True:
+    #                 valid_moves = self.board[y][x].get_valid_moves(self.player, self.board)
+    #                 print(f'valid moves: {valid_moves}')
+    #                 print(f'valid moves: {"".join(chr(move[1] + 65) + str(8 - move[0]) + " " for move in valid_moves)}')
+    #                 p, q = chess._get_coordinate(msg='Enter valid tile to move this piece: (type -1 to cancel) ', allow_exit=True)
+    #                 if not p: break
+    #                 if (p, q) in valid_moves:
+    #                     chess.board[p][q] = chess.board[y][x]
+    #                     chess.board[y][x] = PIECES['EMPTY_TILE']
+    #                     chess.board[p][q].y = p
+    #                     chess.board[p][q].x = q
+    #                     self.player = (self.player + 1) % 2
+    #                     return
+    #                 print('Invalid tile selected, try again!')
+    #         print('Invalid piece selected, try again!')
 
     '''
     Return True if you select your own piece, otherwise false.
@@ -81,7 +81,7 @@ class ChessBoard:
 
     '''
     Given a tile that you are allowed to move, return 2d list of booleans,
-    True means you can move move the piece here, otherwise False
+    True means you can move move the piece here, otherwise False.
     '''
     def get_valid_moves_list(self, i, j) -> list[list[bool]]:
         ret_list = [[False for _ in range(8)] for _ in range(8)]
@@ -89,6 +89,17 @@ class ChessBoard:
         for move in moves:
             ret_list[move[0]][move[1]] = True
         return ret_list
+    
+    '''
+    Move a piece from position (i, j) to (p, q).
+    Does not check if it is valid, so enforce validity before calling this.
+    '''
+    def move_piece(self, i, j, p, q) -> None:
+        self.board[p][q] = self.board[i][j]
+        self.board[i][j] = PIECES['EMPTY_TILE']
+        self.board[p][q].y = p
+        self.board[p][q].x = q
+        self.player = (self.player + 1) % 2
 
 
 if __name__ == "__main__":

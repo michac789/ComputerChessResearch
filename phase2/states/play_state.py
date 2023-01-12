@@ -49,6 +49,10 @@ class PlayState(BaseState):
                         else:
                             self._selected_tile = (i, j)
                             self._allowed_tiles = self._cb.get_valid_moves_list(i, j)
+                    elif event.type == pygame.MOUSEBUTTONDOWN and self._allowed_tiles[i][j]:
+                        self._cb.move_piece(*self._selected_tile, i, j)
+                        self._selected_tile = None
+                        self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
     
     def _draw_chess_board(self, screen):
         self._tiles = []

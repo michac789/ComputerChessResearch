@@ -1,5 +1,5 @@
 from chess_pieces import Piece, King, Queen, Rook, Knight, Bishop, Pawn
-from constants import PIECES
+from chess.chess_constants import PIECES
 
 
 class ChessBoard:

@@ -1,4 +1,4 @@
-from constants import PIECES
+from chess.chess_constants import PIECES
 
 
 _DIAGONAL_MOVES = [(-1, -1), (-1, 1), (1, -1), (1, 1)]

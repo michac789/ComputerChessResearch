@@ -13,6 +13,7 @@ class PlayState(BaseState):
         self._cb.initialize_board()
         self._tiles = []
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
+        self._selected_tile = None
     
     def _initialize_board_sizes(self):
         self._dim_height = 8
@@ -40,6 +41,8 @@ class PlayState(BaseState):
             for j in range(self._dim_width):
                 if self._tiles[i][j].collidepoint(self.mouse_pos):
                     self._hovered_tiles[i][j] = True
+                    if event.type == pygame.MOUSEBUTTONDOWN and self._cb.allow_select_tile(i, j):
+                        self._selected_tile = ((i, j) if self._selected_tile != (i, j) else None)
     
     def _draw_chess_board(self, screen):
         self._tiles = []
@@ -50,7 +53,8 @@ class PlayState(BaseState):
                 start_y = self._board_start[1] + i * self._tile_size
                 rect = pygame.Rect(start_x, start_y, self._tile_size, self._tile_size)
                 col = (
-                    pygame.Color('lightblue') if self._hovered_tiles[i][j] else
+                    pygame.Color('yellow') if (i, j) == self._selected_tile else
+                    pygame.Color('lightblue') if self._cb.allow_select_tile(i, j) and self._hovered_tiles[i][j] else
                     pygame.Color('white') if (i + j) % 2 == 0 else pygame.Color('grey')
                 )
                 pygame.draw.rect(screen, col, rect)

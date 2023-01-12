@@ -72,6 +72,13 @@ class ChessBoard:
                     print('Invalid tile selected, try again!')
             print('Invalid piece selected, try again!')
 
+    '''
+    Return True if you select your own piece, otherwise false.
+    '''
+    def allow_select_tile(self, i, j) -> bool:
+        return (self.board[i][j] != PIECES['EMPTY_TILE'] and
+            self.board[i][j].player == self.player)
+
 
 if __name__ == "__main__":
     chess = ChessBoard()

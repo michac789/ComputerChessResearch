@@ -13,3 +13,19 @@ PIECES = {
     'BLACK_PAWN': '\u2659',
     'EMPTY_TILE': '\u25FB',
 }
+
+PIECES = {
+    'WHITE_KING': 'WK',
+    'BLACK_KING': 'BK',
+    'WHITE_QUEEN': 'WQ',
+    'BLACK_QUEEN': 'BQ',
+    'WHITE_ROOK': 'WR',
+    'BLACK_ROOK': 'BR',
+    'WHITE_KNIGHT': 'WN',
+    'BLACK_KNIGHT': 'BN',
+    'WHITE_BISHOP': 'WB',
+    'BLACK_BISHOP': 'BB',
+    'WHITE_PAWN': 'WP',
+    'BLACK_PAWN': 'BP',
+    'EMPTY_TILE': 'ET',
+}

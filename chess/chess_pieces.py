@@ -68,8 +68,8 @@ class King(Piece):
     
     def _move_castle_left(self, p: int, q: int, board: list[list]) -> None:
         board[p][q] = self
-        board[p][q - 1].move(p, q + 1, board)
-        board[p][q - 1] = PIECES['EMPTY_TILE']
+        board[p][q - 2].move(p, q + 1, board)
+        board[p][q - 2] = PIECES['EMPTY_TILE']
         board[self.y][self.x] = PIECES['EMPTY_TILE']
         self.y = p
         self.x = q
@@ -77,7 +77,7 @@ class King(Piece):
     def move(self, p: int, q: int, board: list[list]) -> None:
         if not self.has_moved and p == self.y and q == 6:
             self._move_castle_right(p, q, board)
-        elif not self.has_moved and p == self.y and q == 1:
+        elif not self.has_moved and p == self.y and q == 2:
             self._move_castle_left(p, q, board)
         else: super().move(p, q, board)
         self.has_moved = True
@@ -88,15 +88,17 @@ class King(Piece):
         if not self.has_moved and board[self.y][5] == PIECES['EMPTY_TILE'] and \
                 board[self.y][6] == PIECES['EMPTY_TILE'] and board[self.y][7] != PIECES['EMPTY_TILE'] and \
                 board[self.y][7].name == 'ROOK' and not board[self.y][7].has_moved:
-            valid_moves.append((self.y, 6))
+            if not any([self.is_checked(board, (7, i)) for i in [4, 5, 6]]):
+                valid_moves.append((self.y, 6))
         # check for castling left
         if not self.has_moved and board[self.y][3] == PIECES['EMPTY_TILE'] and board[self.y][2] == PIECES['EMPTY_TILE'] and \
                 board[self.y][1] == PIECES['EMPTY_TILE'] and board[self.y][0] != PIECES['EMPTY_TILE'] and \
                 board[self.y][0].name == 'ROOK' and not board[self.y][0].has_moved:
-            valid_moves.append((self.y, 1))
+            if not any([self.is_checked(board, (7, i)) for i in [4, 3, 2]]):
+                valid_moves.append((self.y, 2))
         return valid_moves
 
-    def is_checked(self, board: list[list]) -> bool:
+    def is_checked(self, board: list[list], alt_coor: tuple=None) -> bool:
         dy = (-1 if self.player == 0 else 1)
         PAWN_DIR = [(dy, -1), (dy, 1)]
         for DIRECTIONS, PIECE_LIST, INFINTE_RANGE in zip(
@@ -108,6 +110,7 @@ class King(Piece):
                                 board[i][j].name in PIECE_LIST
             for p, q in DIRECTIONS:
                 i, j = self.y, self.x
+                if alt_coor: i, j = alt_coor
                 i, j = i + p, j + q
                 if INFINTE_RANGE:
                     while self._valid_tile(i, j, board):

@@ -71,6 +71,8 @@ class King(Piece):
                     while self._valid_tile(i, j, board):
                         if util_func():
                             return True
+                        if board[i][j] != PIECES['EMPTY_TILE'] and \
+                            board[i][j].player == (self.player + 1) % 2: break
                         i, j = i + p, j + q
                 elif self._valid_tile(i, j, board) and util_func():
                     return True
@@ -120,7 +122,7 @@ class Pawn(Piece):
     
     def _move_pawn_promotion(self, p: int, q: int, board: list[list]) -> None:
         board[p][q] = Queen(self.player, p, q)
-        board[self.x][self.y] = PIECES['EMPTY_TILE']
+        board[self.y][self.x] = PIECES['EMPTY_TILE']
     
     def move(self, p: int, q: int, board: list[list]) -> None:
         if abs(self.y - p) == 2: self.allow_en_passant = True

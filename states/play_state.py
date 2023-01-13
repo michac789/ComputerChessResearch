@@ -107,8 +107,8 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._display_buttons(screen)
         text_player_turn = ('White' if self._cb.player == 0 else 'Black') + '\'s turn'
         text_num_turn = f'Turn {self._cb.turn}'
-        text_winner = ('Draw' if self._winner == 2 else 'Black win' if self._winner == 1 else
-            'White win' if self._winner == 0 else 'Game ongoing')
+        text_winner = ('Draw' if self._winner == 2 else 'Black Win' if self._winner == 1 else
+            'White Win' if self._winner == 0 else 'Game ongoing')
         self._display_texts(screen, [
             (text_player_turn, self.medium_font, pygame.Color('purple'),
             self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (1 / 15)),

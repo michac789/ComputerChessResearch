@@ -47,6 +47,15 @@ class ChessBoard:
                 (Rook, player, row, 7),
                 *[(Pawn, player, row2, j) for j in range(8)],
             ])
+            
+            # FOR TESTING ONLY - TODO remove this when done
+            # self._place_pieces([
+            #     (Rook, player, row, 0),
+            #     (Queen, player, row, 3),
+            #     (King, player, row, 4),
+            #     *[(Pawn, player, row2, j) for j in range(0)],
+            # ])
+
         self.player = 0
         self.turn = 1
     
@@ -71,30 +80,22 @@ class ChessBoard:
     def _simulate_move_safe(self, i, j, p, q):
         cb = deepcopy(self)
         cb.move_piece(i, j, p, q)
-        return cb.is_king_checked()
+        cb.player = (cb.player + 1) % 2
+        return not cb.is_king_checked()[0]
 
     '''
     Given a tile that you are allowed to move, return 2d list of booleans,
     True means you can move move the piece here, otherwise False.
     '''
-    def get_valid_moves_list(self, i, j) -> list[list[bool]]:
-
-        pawns = self._get_pieces(self.player, 'PAWN')
-        for pawn in pawns:
-            print(pawn.allow_en_passant, end='')
-        print('')
-
-        pawns = self._get_pieces((self.player + 1) % 2, 'PAWN')
-        for pawn in pawns:
-            print(pawn.allow_en_passant, end='')
-        print('')
-
+    def get_valid_moves_list(self, i, j) -> tuple[list[list[bool]], bool]:
         ret_list = [[False for _ in range(8)] for _ in range(8)]
+        available_move = False
         moves = self.board[i][j].get_valid_moves(self.board)
         for move in moves:
             if self._simulate_move_safe(i, j, move[0], move[1]):
                 ret_list[move[0]][move[1]] = True
-        return ret_list
+                available_move = True
+        return ret_list, available_move
     
     '''
     Move a piece from position (i, j) to (p, q).
@@ -114,11 +115,31 @@ class ChessBoard:
     def is_king_checked(self) -> tuple[bool, int, int]:
         king = self._get_pieces(self.player, 'KING')[0]
         return king.is_checked(self.board), king.y, king.x
+    
+    '''
+    Return True if there is any available move, otherwise False.
+    '''
+    def _is_available_move(self) -> bool:
+        for i in range(8):
+            for j in range(8):
+                piece = self.board[i][j]
+                if piece != PIECES['EMPTY_TILE'] and piece.player == self.player:
+                    _, avail_move = self.get_valid_moves_list(i, j)
+                    if avail_move: return True
+        return False
+    
+    '''
+    Check status of current game. Return -1 if game is still going.
+    If ended, return 0 (white wins) or 1 (black wins) or 2 (draw).
+    '''
+    def check_ended(self) -> int:
+        if not self._is_available_move():
+            return (self.player + 1) % 2 if self.is_king_checked() else 2
+        return -1
 
 '''
     TODO
     add winning
     add castling feature
-    add en passant
     add pawn promotion
 '''

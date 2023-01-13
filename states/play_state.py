@@ -49,12 +49,13 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                             self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
                         else:
                             self._selected_tile = (i, j)
-                            self._allowed_tiles = self._cb.get_valid_moves_list(i, j)
+                            self._allowed_tiles, _ = self._cb.get_valid_moves_list(i, j)
                     elif event.type == pygame.MOUSEBUTTONDOWN and self._allowed_tiles[i][j]:
                         self._cb.move_piece(*self._selected_tile, i, j)
                         self._selected_tile = None
                         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
-                        
+                        status = self._cb.check_ended()
+                        if status != -1: self.change_state = 'menu' # TODO - when game ended do something !!!
                         checked, king_i, king_j = self._cb.is_king_checked()
                         self._checked_tile = (king_i, king_j) if checked else None
 

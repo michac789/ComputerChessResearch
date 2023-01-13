@@ -139,6 +139,9 @@ class ChessBoard:
 
 '''
     TODO
-    add castling feature
+    do not allow castling if path under checked
+    draw if only 2 kings left on screen
     draw after 3 consecutive repeated moves
+    50 move rule
+    pawn promotion choose what to promote
 '''

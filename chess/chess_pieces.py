@@ -97,7 +97,7 @@ class King(Piece):
         return valid_moves
 
     def is_checked(self, board: list[list]) -> bool:
-        dy = (-1 if self.player == 1 else 0)
+        dy = (-1 if self.player == 0 else 1)
         PAWN_DIR = [(dy, -1), (dy, 1)]
         for DIRECTIONS, PIECE_LIST, INFINTE_RANGE in zip(
                 [_DIAGONAL_MOVES, _SIDE_MOVES, _KNIGHT_MOVES, _DIAGONAL_MOVES, _SIDE_MOVES, PAWN_DIR],

@@ -16,14 +16,28 @@ class TextsMixin:
     with hover effects and clicking functionality.
 '''
 class ButtonsMixin:
+    '''
+    Call this when initializing your state object.
+    '_button_options' store list of texts to be displayed.
+    '_button_dict' store dict of button to check for collision.
+    '_button_hover' keep track of which button is currently hovered.
+    '''
     def _initialize_buttons(self, options: list=[]):
         self._button_options = options
         self._button_dict = {}
         self._button_hover = [False for _ in range(len(self._button_options))]
     
+    '''
+    Utility function to update 'change_state' instance variable.
+    '''
     def _change_state_callback(self, state: str):
         self.change_state = state
 
+    '''
+    Call this in 'get_event' method, check that for each button:
+    When hovered, make change to 'self._button_hover'.
+    When clicked, call the callback function from 'callbacks' dict.
+    '''
     def _get_event_buttons(self, event: pygame.event, callbacks: dict[callable] = {}):
         for i in range(len(self._button_dict)):
             self._button_hover[i] = False
@@ -32,6 +46,10 @@ class ButtonsMixin:
             if event.type == pygame.MOUSEBUTTONDOWN and self._button_dict[i].collidepoint(self.mouse_pos):
                 if i in callbacks: callbacks[i]()
     
+    '''
+    Call this in 'draw' method for every button needed.
+    Creates rectangle and blit the text on the center of it.
+    '''
     def _create_button_util(self, i: int, text: str, surf: pygame.surface,
             s_x: float, s_y: float, w: float, h: float, font: pygame.font,
             antialias: bool=True,

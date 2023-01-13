@@ -76,6 +76,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                 start_y = self._board_start[1] + i * self._tile_size
                 rect = pygame.Rect(start_x, start_y, self._tile_size, self._tile_size)
                 col = (
+                    pygame.Color('darkred') if (i, j) == self._checked_tile and self._winner != -1 else
                     pygame.Color('red') if (i, j) == self._checked_tile else
                     pygame.Color('green') if self._allowed_tiles[i][j] else
                     pygame.Color('yellow') if (i, j) == self._selected_tile else

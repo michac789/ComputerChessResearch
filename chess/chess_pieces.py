@@ -54,6 +54,48 @@ class King(Piece):
     _valid_directions = _DIAGONAL_MOVES + _SIDE_MOVES
     _infinite_range = False
 
+    def __init__(self, player: int, y: int, x: int):
+        super().__init__(player, y, x)
+        self.has_moved = False
+    
+    def _move_castle_right(self, p: int, q: int, board: list[list]) -> None:
+        board[p][q] = self
+        board[p][q + 1].move(p, q - 1, board)
+        board[p][q + 1] = PIECES['EMPTY_TILE']
+        board[self.y][self.x] = PIECES['EMPTY_TILE']
+        self.y = p
+        self.x = q
+    
+    def _move_castle_left(self, p: int, q: int, board: list[list]) -> None:
+        board[p][q] = self
+        board[p][q - 1].move(p, q + 1, board)
+        board[p][q - 1] = PIECES['EMPTY_TILE']
+        board[self.y][self.x] = PIECES['EMPTY_TILE']
+        self.y = p
+        self.x = q
+
+    def move(self, p: int, q: int, board: list[list]) -> None:
+        if not self.has_moved and p == self.y and q == 6:
+            self._move_castle_right(p, q, board)
+        elif not self.has_moved and p == self.y and q == 1:
+            self._move_castle_left(p, q, board)
+        else: super().move(p, q, board)
+        self.has_moved = True
+    
+    def get_valid_moves(self, board: list[list]) -> list[tuple[int]]:
+        valid_moves = super().get_valid_moves(board)
+        # check for castling right
+        if not self.has_moved and board[self.y][5] == PIECES['EMPTY_TILE'] and \
+                board[self.y][6] == PIECES['EMPTY_TILE'] and board[self.y][7] != PIECES['EMPTY_TILE'] and \
+                board[self.y][7].name == 'ROOK' and not board[self.y][7].has_moved:
+            valid_moves.append((self.y, 6))
+        # check for castling left
+        if not self.has_moved and board[self.y][3] == PIECES['EMPTY_TILE'] and board[self.y][2] == PIECES['EMPTY_TILE'] and \
+                board[self.y][1] == PIECES['EMPTY_TILE'] and board[self.y][0] != PIECES['EMPTY_TILE'] and \
+                board[self.y][0].name == 'ROOK' and not board[self.y][0].has_moved:
+            valid_moves.append((self.y, 1))
+        return valid_moves
+
     def is_checked(self, board: list[list]) -> bool:
         dy = (-1 if self.player == 1 else 0)
         PAWN_DIR = [(dy, -1), (dy, 1)]
@@ -89,6 +131,14 @@ class Rook(Piece):
     name = 'ROOK'
     _valid_directions = _SIDE_MOVES
     _infinite_range = True
+
+    def __init__(self, player: int, y: int, x: int):
+        super().__init__(player, y, x)
+        self.has_moved = False
+
+    def move(self, p: int, q: int, board: list[list]) -> None:
+        super().move(p, q, board)
+        self.has_moved = True
 
 
 class Knight(Piece):

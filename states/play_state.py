@@ -104,7 +104,10 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._draw_chess_board(screen)
         self._display_buttons(screen)
         text_player_turn = ('White' if self._cb.player == 0 else 'Black') + '\'s turn'
+        text_num_turn = f'Turn {self._cb.turn}'
         self._display_texts(screen, [
             (text_player_turn, self.medium_font, pygame.Color('purple'),
-            self.params['screen_width'] * (10 / 16), 30),
+            self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (1 / 15)),
+            (text_num_turn, self.medium_font, pygame.Color('purple'),
+            self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (2 / 15)),
         ])

@@ -47,6 +47,14 @@ class ChessBoard:
                 *[(Pawn, player, row2, j) for j in range(8)],
             ])
         self.player = 0
+        self.turn = 1
+    
+    '''
+    Change to next player, increment turn every time both players move.
+    '''
+    def _next_player(self):
+        if self.player == 1: self.turn += 1
+        self.player = (self.player + 1) % 2
 
     '''
     Return True if you select your own piece, otherwise false.
@@ -86,9 +94,8 @@ class ChessBoard:
     def move_piece(self, i: int, j: int, p: int, q: int, next: bool=True) -> None:
         self.board[p][q] = self.board[i][j]
         self.board[i][j] = PIECES['EMPTY_TILE']
-        self.board[p][q].y = p
-        self.board[p][q].x = q
-        if next: self.player = (self.player + 1) % 2
+        self.board[p][q].move(p, q)
+        if next: self._next_player()
     
     '''
     Check whether the king is on check or not at the current board state.

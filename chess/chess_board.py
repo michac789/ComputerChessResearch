@@ -54,6 +54,18 @@ class ChessBoard:
     def allow_select_tile(self, i, j) -> bool:
         return (self.board[i][j] != PIECES['EMPTY_TILE'] and
             self.board[i][j].player == self.player)
+    
+    '''
+    Simulate one move ahead. Return True if king is not checked after
+    making that move, otherwise False.
+    '''
+    def _simulate_move_safe(self, i, j, p, q):
+        temp = self.board[p][q]
+        self.move_piece(i, j, p, q, next=False)
+        checked = self.is_king_checked()[0]
+        self.move_piece(p, q, i, j, next=False)
+        self.board[p][q] = temp
+        return not checked
 
     '''
     Given a tile that you are allowed to move, return 2d list of booleans,
@@ -63,32 +75,32 @@ class ChessBoard:
         ret_list = [[False for _ in range(8)] for _ in range(8)]
         moves = self.board[i][j].get_valid_moves(self.board)
         for move in moves:
-            ret_list[move[0]][move[1]] = True
+            if self._simulate_move_safe(i, j, move[0], move[1]):
+                ret_list[move[0]][move[1]] = True
         return ret_list
     
     '''
     Move a piece from position (i, j) to (p, q).
     Does not check if it is valid, so enforce validity before calling this.
     '''
-    def move_piece(self, i, j, p, q) -> None:
+    def move_piece(self, i: int, j: int, p: int, q: int, next: bool=True) -> None:
         self.board[p][q] = self.board[i][j]
         self.board[i][j] = PIECES['EMPTY_TILE']
         self.board[p][q].y = p
         self.board[p][q].x = q
-        self.player = (self.player + 1) % 2
+        if next: self.player = (self.player + 1) % 2
     
     '''
     Check whether the king is on check or not at the current board state.
-    Return boolean (True if on check, False otherwise) and king's position on board
+    Return boolean (True if on check, False otherwise) and king's position.
     '''
-    def is_king_safe(self) -> tuple[bool, int, int]:
+    def is_king_checked(self) -> tuple[bool, int, int]:
         king = self._get_pieces(self.player, 'KING')[0]
         return king.is_checked(self.board), king.y, king.x
 
 '''
     TODO
     add winning
-    forced move when king in check
     add castling feature
     add en passant
     add pawn promotion

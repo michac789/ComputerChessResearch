@@ -12,11 +12,6 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._initialize_buttons(['Reset Board', 'Main Menu'])
         self._generate_quads()
         self._cb = ChessBoard()
-
-        print('initttt')
-        self.aaa = self._cb.board[7][4].is_checked(self._cb.board)
-        print(self.aaa)
-
         self._tiles = []
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         self._selected_tile = None
@@ -60,15 +55,14 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                         self._selected_tile = None
                         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
                         
-                        checked, king_i, king_j = self._cb.is_king_safe()
-                        print(checked, king_i, king_j)
+                        checked, king_i, king_j = self._cb.is_king_checked()
                         self._checked_tile = (king_i, king_j) if checked else None
 
     def get_event(self, event: pygame.event):
         super().get_event(event)
         self._get_event_board(event)
         self._get_event_buttons(event, callbacks={
-            0: lambda: self._cb.initialize_board(),
+            0: lambda: self._change_state_callback('play'),
             1: lambda: self._change_state_callback('menu'),
         })
     

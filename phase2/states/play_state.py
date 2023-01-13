@@ -1,11 +1,11 @@
 import pygame, os
 from states.base_state import BaseState
-from states.mixins import ButtonsMixin
+from states.mixins import TextsMixin, ButtonsMixin
 from chess.chess_board import ChessBoard
 from chess.chess_constants import MAPPING
 
 
-class PlayState(ButtonsMixin, BaseState):
+class PlayState(TextsMixin, ButtonsMixin, BaseState):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._initialize_board_sizes()
@@ -36,7 +36,7 @@ class PlayState(ButtonsMixin, BaseState):
             for j in range(6):
                 self._sprite_sheet[i * 6 + j + 1] = (t * j, t * i, t, t)
     
-    def _get_event_board(self, event):
+    def _get_event_board(self, event: pygame.event):
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         for i in range(self._dim_height):
             for j in range(self._dim_width):
@@ -54,7 +54,7 @@ class PlayState(ButtonsMixin, BaseState):
                         self._selected_tile = None
                         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
 
-    def get_event(self, event):
+    def get_event(self, event: pygame.event):
         super().get_event(event)
         self._get_event_board(event)
         self._get_event_buttons(event, callbacks={
@@ -62,7 +62,7 @@ class PlayState(ButtonsMixin, BaseState):
             1: lambda: self._change_state_callback('menu'),
         })
     
-    def _draw_chess_board(self, screen):
+    def _draw_chess_board(self, screen: pygame.surface):
         self._tiles = []
         for i in range(self._dim_height):
             row_tiles = []
@@ -84,7 +84,7 @@ class PlayState(ButtonsMixin, BaseState):
                 row_tiles.append(rect)
             self._tiles.append(row_tiles)
     
-    def _display_buttons(self, screen):
+    def _display_buttons(self, screen: pygame.surface):
         BUTTON_WIDTH = self.params['screen_width'] * (1 / 5)
         BUTTON_HEIGHT = self.params['screen_height'] * (1 / 8)
         START_X = (self.params['screen_width'] - BUTTON_WIDTH) * (11 / 16)
@@ -94,7 +94,12 @@ class PlayState(ButtonsMixin, BaseState):
             self._create_button_util(i, option, screen, START_X, START_Y,
                 BUTTON_WIDTH, BUTTON_HEIGHT, self.small_font)
         
-    def draw(self, screen):
+    def draw(self, screen: pygame.surface):
         screen.fill(pygame.Color((255, 153, 102)))
         self._draw_chess_board(screen)
         self._display_buttons(screen)
+        text_player_turn = ('White' if self._cb.player == 0 else 'Black') + '\'s turn'
+        self._display_texts(screen, [
+            (text_player_turn, self.medium_font, pygame.Color('purple'),
+            self.params['screen_width'] * (10 / 16), 30),
+        ])

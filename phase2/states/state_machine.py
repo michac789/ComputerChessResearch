@@ -9,7 +9,7 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode(
             (SCREEN_WIDTH, SCREEN_HEIGHT),
-            pygame.RESIZABLE
+            # pygame.RESIZABLE
         )
         self.clock = pygame.time.Clock()
         self.states = states

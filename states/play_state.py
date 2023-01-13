@@ -116,4 +116,6 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
             self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (3 / 15)),
             (text_winner, self.medium_font, pygame.Color('purple'),
             self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (5 / 15)),
+            (f'Pieces left = {self._cb.piece_count}', self.medium_font, pygame.Color('purple'),
+            self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (7 / 15)),
         ])

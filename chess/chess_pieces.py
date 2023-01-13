@@ -28,11 +28,13 @@ class Piece:
             )
         )
     
-    def move(self, p: int, q: int, board: list[list]) -> None:
+    def move(self, p: int, q: int, board: list[list]) -> bool:
+        capture = board[p][q] != PIECES['EMPTY_TILE']
         board[p][q] = self
         board[self.y][self.x] = PIECES['EMPTY_TILE']
         self.y = p
         self.x = q
+        return capture
     
     def get_valid_moves(self, board: list[list]) -> list[tuple[int]]:
         valid_moves = []
@@ -74,13 +76,15 @@ class King(Piece):
         self.y = p
         self.x = q
 
-    def move(self, p: int, q: int, board: list[list]) -> None:
+    def move(self, p: int, q: int, board: list[list]) -> bool:
+        capture = False
         if not self.has_moved and p == self.y and q == 6:
             self._move_castle_right(p, q, board)
         elif not self.has_moved and p == self.y and q == 2:
             self._move_castle_left(p, q, board)
-        else: super().move(p, q, board)
+        else: capture = super().move(p, q, board)
         self.has_moved = True
+        return capture
     
     def get_valid_moves(self, board: list[list]) -> list[tuple[int]]:
         valid_moves = super().get_valid_moves(board)
@@ -139,9 +143,9 @@ class Rook(Piece):
         super().__init__(player, y, x)
         self.has_moved = False
 
-    def move(self, p: int, q: int, board: list[list]) -> None:
-        super().move(p, q, board)
+    def move(self, p: int, q: int, board: list[list]) -> bool:
         self.has_moved = True
+        return super().move(p, q, board)
 
 
 class Knight(Piece):
@@ -165,23 +169,24 @@ class Pawn(Piece):
         self.dy = -1 if self.player == 0 else 1
         self.promotion_row = 0 if self.player == 0 else 7
     
-    def _move_en_passant(self, p: int, q: int, board: list[list]) -> None:
+    def _move_en_passant(self, p: int, q: int, board: list[list]) -> bool:
         for dir in [-1, 1]:
             if self._valid_tile(self.y, self.x + dir, board) and \
                     board[self.y][self.x + dir] != PIECES['EMPTY_TILE'] and \
                     board[self.y][self.x + dir].name == 'PAWN' and \
                     self.x + dir == q:
                 board[self.y][self.x + dir] = PIECES['EMPTY_TILE']
+                return True
     
     def _move_pawn_promotion(self, p: int, q: int, board: list[list]) -> None:
         board[p][q] = Queen(self.player, p, q)
         board[self.y][self.x] = PIECES['EMPTY_TILE']
     
-    def move(self, p: int, q: int, board: list[list]) -> None:
+    def move(self, p: int, q: int, board: list[list]) -> bool:
         if abs(self.y - p) == 2: self.allow_en_passant = True
-        self._move_en_passant(p, q, board)
-        if p == self.promotion_row: self._move_pawn_promotion(p, q, board)
-        else: super().move(p, q, board)
+        if self._move_en_passant(p, q, board): return True
+        elif p == self.promotion_row: self._move_pawn_promotion(p, q, board)
+        else: return super().move(p, q, board)
 
     def get_valid_moves(self, board: list[list]) -> list[tuple]:
         valid_moves = []

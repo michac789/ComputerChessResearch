@@ -36,28 +36,31 @@ class ChessBoard:
         for player in range(2):
             row = 7 - 7 * player
             row2 = 6 - 5 * player
-            self._place_pieces([
-                (Rook, player, row, 0),
-                (Knight, player, row, 1),
-                (Bishop, player, row, 2),
-                (Queen, player, row, 3),
-                (King, player, row, 4),
-                (Bishop, player, row, 5),
-                (Knight, player, row, 6),
-                (Rook, player, row, 7),
-                *[(Pawn, player, row2, j) for j in range(8)],
-            ])
-            
-            # FOR TESTING ONLY - TODO remove this when done
             # self._place_pieces([
             #     (Rook, player, row, 0),
+            #     (Knight, player, row, 1),
+            #     (Bishop, player, row, 2),
             #     (Queen, player, row, 3),
             #     (King, player, row, 4),
-            #     *[(Pawn, player, row2, j) for j in range(0)],
+            #     (Bishop, player, row, 5),
+            #     (Knight, player, row, 6),
+            #     (Rook, player, row, 7),
+            #     *[(Pawn, player, row2, j) for j in range(8)],
             # ])
+            
+            # FOR TESTING ONLY - TODO remove this when done
+            self._place_pieces([
+                (Rook, player, row, 0),
+                (Queen, player, row, 3),
+                (King, player, row, 4),
+                *[(Pawn, player, row2, j) for j in range(0)],
+            ])
 
         self.player = 0
         self.turn = 1
+        self.piece_count = 32
+        self.game_ended = False
+        self.piece_count = 6
     
     '''
     Change to next player, increment turn every time both players move.
@@ -67,9 +70,11 @@ class ChessBoard:
         self.player = (self.player + 1) % 2
 
     '''
-    Return True if you select your own piece, otherwise false.
+    Return True if you select your own piece, otherwise False.
+    If game already ended, return False.
     '''
     def allow_select_tile(self, i, j) -> bool:
+        if self.game_ended: return False
         return (self.board[i][j] != PIECES['EMPTY_TILE'] and
             self.board[i][j].player == self.player)
     
@@ -105,8 +110,9 @@ class ChessBoard:
     def move_piece(self, i: int, j: int, p: int, q: int) -> None:
         pawns = self._get_pieces(self.player, 'PAWN')
         for pawn in pawns: pawn.allow_en_passant = False
-        self.board[i][j].move(p, q, self.board)
-        if next: self._next_player()
+        if self.board[i][j].move(p, q, self.board):
+            self.piece_count -= 1
+        self._next_player()
     
     '''
     Check whether the king is on check or not at the current board state.
@@ -133,15 +139,14 @@ class ChessBoard:
     If ended, return 0 (white wins) or 1 (black wins) or 2 (draw).
     '''
     def check_ended(self) -> int:
-        if not self._is_available_move():
+        if not self._is_available_move() or self.piece_count <= 2:
+            self.game_ended = True
             return (self.player + 1) % 2 if self.is_king_checked()[0] else 2
         return -1
 
 '''
-    TODO
-    do not allow castling if path under checked
-    draw if only 2 kings left on screen
+    TODO - uncompleted chess rules
     draw after 3 consecutive repeated moves
-    50 move rule
+    draw 50 move rule
     pawn promotion choose what to promote
 '''

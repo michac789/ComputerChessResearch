@@ -36,25 +36,25 @@ class ChessBoard:
         for player in range(2):
             row = 7 - 7 * player
             row2 = 6 - 5 * player
-            self._place_pieces([
-                (Rook, player, row, 0),
-                (Knight, player, row, 1),
-                (Bishop, player, row, 2),
-                (Queen, player, row, 3),
-                (King, player, row, 4),
-                (Bishop, player, row, 5),
-                (Knight, player, row, 6),
-                (Rook, player, row, 7),
-                *[(Pawn, player, row2, j) for j in range(8)],
-            ])
-            
-            # FOR TESTING ONLY - TODO remove this when done
             # self._place_pieces([
             #     (Rook, player, row, 0),
+            #     (Knight, player, row, 1),
+            #     (Bishop, player, row, 2),
             #     (Queen, player, row, 3),
             #     (King, player, row, 4),
-            #     *[(Pawn, player, row2, j) for j in range(0)],
+            #     (Bishop, player, row, 5),
+            #     (Knight, player, row, 6),
+            #     (Rook, player, row, 7),
+            #     *[(Pawn, player, row2, j) for j in range(8)],
             # ])
+            
+            # FOR TESTING ONLY - TODO remove this when done
+            self._place_pieces([
+                (Rook, player, row, 0),
+                (Queen, player, row, 3),
+                (King, player, row, 4),
+                *[(Pawn, player, row2, j) for j in range(0)],
+            ])
 
         self.player = 0
         self.turn = 1
@@ -134,12 +134,12 @@ class ChessBoard:
     '''
     def check_ended(self) -> int:
         if not self._is_available_move():
-            return (self.player + 1) % 2 if self.is_king_checked() else 2
+            return (self.player + 1) % 2 if self.is_king_checked()[0] else 2
         return -1
 
 '''
     TODO
-    add winning
     add castling feature
     add pawn promotion
+    draw after 3 consecutive repeated moves
 '''

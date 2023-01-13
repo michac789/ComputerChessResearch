@@ -109,14 +109,21 @@ class Pawn(Piece):
         self.allow_en_passant = False
         self.dy = -1 if self.player == 0 else 1
     
-    def move(self, p: int, q: int, board: list[list]) -> None:
-        if abs(self.y - p) == 2: self.allow_en_passant = True
+    def _move_en_passant(self, p: int, q: int, board: list[list]) -> None:
         for dir in [-1, 1]:
             if self._valid_tile(self.y, self.x + dir, board) and \
                     board[self.y][self.x + dir] != PIECES['EMPTY_TILE'] and \
                     board[self.y][self.x + dir].name == 'PAWN' and \
                     self.x + dir == q:
                 board[self.y][self.x + dir] = PIECES['EMPTY_TILE']
+    
+    def _move_pawn_promotion(self, p: int, q: int, board: list[list]) -> None:
+        pass
+    
+    def move(self, p: int, q: int, board: list[list]) -> None:
+        if abs(self.y - p) == 2: self.allow_en_passant = True
+        self._move_en_passant(p, q, board)
+        self._move_pawn_promotion(p, q, board)
         super().move(p, q, board)
 
     def get_valid_moves(self, board: list[list]) -> list[tuple]:

@@ -17,6 +17,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._selected_tile = None
         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
         self._checked_tile = None
+        self._winner = -1 # -1 (no winner), 0 (white win), 1 (black win), 2 (draw)
     
     def _initialize_board_sizes(self):
         self._dim_height = 8
@@ -54,8 +55,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                         self._cb.move_piece(*self._selected_tile, i, j)
                         self._selected_tile = None
                         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
-                        status = self._cb.check_ended()
-                        if status != -1: self.change_state = 'menu' # TODO - when game ended do something !!!
+                        self._winner = self._cb.check_ended()
                         checked, king_i, king_j = self._cb.is_king_checked()
                         self._checked_tile = (king_i, king_j) if checked else None
 
@@ -106,9 +106,13 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._display_buttons(screen)
         text_player_turn = ('White' if self._cb.player == 0 else 'Black') + '\'s turn'
         text_num_turn = f'Turn {self._cb.turn}'
+        text_winner = ('Draw' if self._winner == 2 else 'Black win' if self._winner == 1 else
+            'White win' if self._winner == 0 else 'Game ongoing')
         self._display_texts(screen, [
             (text_player_turn, self.medium_font, pygame.Color('purple'),
             self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (1 / 15)),
             (text_num_turn, self.medium_font, pygame.Color('purple'),
-            self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (2 / 15)),
+            self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (3 / 15)),
+            (text_winner, self.medium_font, pygame.Color('purple'),
+            self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (5 / 15)),
         ])

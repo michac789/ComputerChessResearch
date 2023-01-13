@@ -1,3 +1,4 @@
+from copy import deepcopy
 from chess.chess_pieces import Piece, King, Queen, Rook, Knight, Bishop, Pawn
 from chess.chess_constants import PIECES
 
@@ -68,12 +69,9 @@ class ChessBoard:
     making that move, otherwise False.
     '''
     def _simulate_move_safe(self, i, j, p, q):
-        temp = self.board[p][q]
-        self.move_piece(i, j, p, q, next=False)
-        checked = self.is_king_checked()[0]
-        self.move_piece(p, q, i, j, next=False)
-        self.board[p][q] = temp
-        return not checked
+        cb = deepcopy(self)
+        cb.move_piece(i, j, p, q)
+        return cb.is_king_checked()
 
     '''
     Given a tile that you are allowed to move, return 2d list of booleans,
@@ -100,14 +98,13 @@ class ChessBoard:
     
     '''
     Move a piece from position (i, j) to (p, q).
+    Reset all own pawns 'allow_en_passant' attribute to False.
     Does not check if it is valid, so enforce validity before calling this.
     '''
-    def move_piece(self, i: int, j: int, p: int, q: int, next: bool=True) -> None:
+    def move_piece(self, i: int, j: int, p: int, q: int) -> None:
         pawns = self._get_pieces(self.player, 'PAWN')
         for pawn in pawns: pawn.allow_en_passant = False
-        self.board[p][q] = self.board[i][j]
-        self.board[i][j] = PIECES['EMPTY_TILE']
-        self.board[p][q].move(p, q)
+        self.board[i][j].move(p, q, self.board)
         if next: self._next_player()
     
     '''

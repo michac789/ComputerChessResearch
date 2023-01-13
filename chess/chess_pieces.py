@@ -28,9 +28,11 @@ class Piece:
             )
         )
     
-    def move(self, i: int, j: int):
-        self.y = i
-        self.x = j
+    def move(self, p: int, q: int, board: list[list]) -> None:
+        board[p][q] = self
+        board[self.y][self.x] = PIECES['EMPTY_TILE']
+        self.y = p
+        self.x = q
     
     def get_valid_moves(self, board: list[list]) -> list[tuple[int]]:
         valid_moves = []
@@ -105,29 +107,35 @@ class Pawn(Piece):
     def __init__(self, player: int, y: int, x: int):
         super().__init__(player, y, x)
         self.allow_en_passant = False
+        self.dy = -1 if self.player == 0 else 1
     
-    def move(self, i: int, j: int):
-        if abs(self.y - i) == 2: self.allow_en_passant = True
-        super().move(i, j)
+    def move(self, p: int, q: int, board: list[list]) -> None:
+        if abs(self.y - p) == 2: self.allow_en_passant = True
+        for dir in [-1, 1]:
+            if self._valid_tile(self.y, self.x + dir, board) and \
+                    board[self.y][self.x + dir] != PIECES['EMPTY_TILE'] and \
+                    board[self.y][self.x + dir].name == 'PAWN' and \
+                    self.x + dir == q:
+                board[self.y][self.x + dir] = PIECES['EMPTY_TILE']
+        super().move(p, q, board)
 
     def get_valid_moves(self, board: list[list]) -> list[tuple]:
         valid_moves = []
-        dy = (-1 if self.player == 0 else 1) # define forward direction
         i, j = self.y, self.x
 
         # allow capture pieces diagonally
-        for p, q in [(dy, -1), (dy, 1)]:
+        for p, q in [(self.dy, -1), (self.dy, 1)]:
             if self._valid_tile(i + p, j + q, board) and board[i + p][j + q] != PIECES['EMPTY_TILE']:
                 valid_moves.append((i + p, j + q))
         
         # allow move one step forward if tile is empty
-        if self._valid_tile(i + 1 * dy, j, board) and board[i + 1 * dy][j] == PIECES['EMPTY_TILE']:
-            valid_moves.append((i + 1 * dy, j))
+        if self._valid_tile(i + 1 * self.dy, j, board) and board[i + 1 * self.dy][j] == PIECES['EMPTY_TILE']:
+            valid_moves.append((i + 1 * self.dy, j))
         
         # allow move two step forward if next two tiles are empty and still on original position
-        if (3.5 - 2.5 * dy) == i and self._valid_tile(i + 2 * dy, j, board) and \
-                board[i + 2 * dy][j] == PIECES['EMPTY_TILE'] and board[i + dy][j] == PIECES['EMPTY_TILE']:
-            valid_moves.append((i + 2 * dy, j))
+        if (3.5 - 2.5 * self.dy) == i and self._valid_tile(i + 2 * self.dy, j, board) and \
+                board[i + 2 * self.dy][j] == PIECES['EMPTY_TILE'] and board[i + self.dy][j] == PIECES['EMPTY_TILE']:
+            valid_moves.append((i + 2 * self.dy, j))
         
         # en passant
         for p, q in [(0, -1), (0, 1)]:
@@ -135,6 +143,6 @@ class Pawn(Piece):
                 tile = board[i + p][j + q]
                 if tile != PIECES['EMPTY_TILE'] and \
                         tile.name == 'PAWN' and tile.allow_en_passant:
-                    valid_moves.append((i + p + dy, j + q))
+                    valid_moves.append((i + p + self.dy, j + q))
 
         return valid_moves

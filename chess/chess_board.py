@@ -80,6 +80,17 @@ class ChessBoard:
     True means you can move move the piece here, otherwise False.
     '''
     def get_valid_moves_list(self, i, j) -> list[list[bool]]:
+
+        pawns = self._get_pieces(self.player, 'PAWN')
+        for pawn in pawns:
+            print(pawn.allow_en_passant, end='')
+        print('')
+
+        pawns = self._get_pieces((self.player + 1) % 2, 'PAWN')
+        for pawn in pawns:
+            print(pawn.allow_en_passant, end='')
+        print('')
+
         ret_list = [[False for _ in range(8)] for _ in range(8)]
         moves = self.board[i][j].get_valid_moves(self.board)
         for move in moves:
@@ -92,6 +103,8 @@ class ChessBoard:
     Does not check if it is valid, so enforce validity before calling this.
     '''
     def move_piece(self, i: int, j: int, p: int, q: int, next: bool=True) -> None:
+        pawns = self._get_pieces(self.player, 'PAWN')
+        for pawn in pawns: pawn.allow_en_passant = False
         self.board[p][q] = self.board[i][j]
         self.board[i][j] = PIECES['EMPTY_TILE']
         self.board[p][q].move(p, q)

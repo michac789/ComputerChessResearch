@@ -12,10 +12,16 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._initialize_buttons(['Reset Board', 'Main Menu'])
         self._generate_quads()
         self._cb = ChessBoard()
+
+        print('initttt')
+        self.aaa = self._cb.board[7][4].is_checked(self._cb.board)
+        print(self.aaa)
+
         self._tiles = []
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         self._selected_tile = None
         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
+        self._checked_tile = None
     
     def _initialize_board_sizes(self):
         self._dim_height = 8
@@ -53,6 +59,10 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                         self._cb.move_piece(*self._selected_tile, i, j)
                         self._selected_tile = None
                         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
+                        
+                        checked, king_i, king_j = self._cb.is_king_safe()
+                        print(checked, king_i, king_j)
+                        self._checked_tile = (king_i, king_j) if checked else None
 
     def get_event(self, event: pygame.event):
         super().get_event(event)
@@ -71,6 +81,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                 start_y = self._board_start[1] + i * self._tile_size
                 rect = pygame.Rect(start_x, start_y, self._tile_size, self._tile_size)
                 col = (
+                    pygame.Color('red') if (i, j) == self._checked_tile else
                     pygame.Color('green') if self._allowed_tiles[i][j] else
                     pygame.Color('yellow') if (i, j) == self._selected_tile else
                     pygame.Color('lightblue') if self._cb.allow_select_tile(i, j) and self._hovered_tiles[i][j] else

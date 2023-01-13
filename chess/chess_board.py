@@ -15,6 +15,19 @@ class ChessBoard:
             self.board[i][j] = Class(player, i, j)
 
     '''
+    Utility function to get list of pieces correspond to a given player and piece name.
+    '''
+    def _get_pieces(self, player: int, name: str) -> list[type]:
+        ret_list = []
+        for i in range(8):
+            for j in range(8):
+                piece = self.board[i][j]
+                if piece != PIECES['EMPTY_TILE']:
+                    if piece.name == name and piece.player == player:
+                        ret_list.append(piece)
+        return ret_list
+
+    '''
     Setup starting position of chess board, white moves first.
     '''
     def initialize_board(self) -> None:
@@ -48,7 +61,7 @@ class ChessBoard:
     '''
     def get_valid_moves_list(self, i, j) -> list[list[bool]]:
         ret_list = [[False for _ in range(8)] for _ in range(8)]
-        moves = self.board[i][j].get_valid_moves(self.player, self.board)
+        moves = self.board[i][j].get_valid_moves(self.board)
         for move in moves:
             ret_list[move[0]][move[1]] = True
         return ret_list
@@ -63,6 +76,14 @@ class ChessBoard:
         self.board[p][q].y = p
         self.board[p][q].x = q
         self.player = (self.player + 1) % 2
+    
+    '''
+    Check whether the king is on check or not at the current board state.
+    Return boolean (True if on check, False otherwise) and king's position on board
+    '''
+    def is_king_safe(self) -> tuple[bool, int, int]:
+        king = self._get_pieces(self.player, 'KING')[0]
+        return king.is_checked(self.board), king.y, king.x
 
 '''
     TODO

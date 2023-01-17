@@ -12,3 +12,4 @@ states = {
     'quit': lambda **_: sys.exit(),
 }
 game = Game(states, 'menu')
+game.run()

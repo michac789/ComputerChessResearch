@@ -36,31 +36,22 @@ class ChessBoard:
         for player in range(2):
             row = 7 - 7 * player
             row2 = 6 - 5 * player
-            # self._place_pieces([
-            #     (Rook, player, row, 0),
-            #     (Knight, player, row, 1),
-            #     (Bishop, player, row, 2),
-            #     (Queen, player, row, 3),
-            #     (King, player, row, 4),
-            #     (Bishop, player, row, 5),
-            #     (Knight, player, row, 6),
-            #     (Rook, player, row, 7),
-            #     *[(Pawn, player, row2, j) for j in range(8)],
-            # ])
-            
-            # FOR TESTING ONLY - TODO remove this when done
             self._place_pieces([
                 (Rook, player, row, 0),
+                (Knight, player, row, 1),
+                (Bishop, player, row, 2),
                 (Queen, player, row, 3),
                 (King, player, row, 4),
-                *[(Pawn, player, row2, j) for j in range(0)],
+                (Bishop, player, row, 5),
+                (Knight, player, row, 6),
+                (Rook, player, row, 7),
+                *[(Pawn, player, row2, j) for j in range(8)],
             ])
 
         self.player = 0
         self.turn = 1
         self.piece_count = 32
         self.game_ended = False
-        self.piece_count = 6
     
     '''
     Change to next player, increment turn every time both players move.
@@ -90,7 +81,7 @@ class ChessBoard:
 
     '''
     Given a tile that you are allowed to move, return 2d list of booleans,
-    True means you can move move the piece here, otherwise False.
+    True means you can move the piece here, otherwise False.
     '''
     def get_valid_moves_list(self, i, j) -> tuple[list[list[bool]], bool]:
         ret_list = [[False for _ in range(8)] for _ in range(8)]

@@ -3,7 +3,7 @@ from states.base_state import BaseState
 from states.mixins import TextsMixin, ButtonsMixin
 from chess.chess_board import ChessBoard
 from chess.chess_constants import MAPPING
-from chess.chess_ai import computer_lvl1
+from chess.chess_ai import get_computer_move
 
 
 class PlayState(TextsMixin, ButtonsMixin, BaseState):
@@ -130,7 +130,7 @@ class PlayAIState(PlayState, BaseState):
 
     def _get_event_board(self, event: pygame.event, is_ai: bool=False):
         if self._computer_turn:
-            self._cb.move_piece(*computer_lvl1(self._cb))
+            self._cb.move_piece(*get_computer_move(self._cb))
             self._computer_turn = False
         super()._get_event_board(event, is_ai)
 

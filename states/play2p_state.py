@@ -1,17 +1,17 @@
 import pygame, os
 from states.base_state import BaseState
-from states.mixins import TextsMixin, ButtonsMixin
+from states.mixins import AtlasMixin, TextsMixin, ButtonsMixin
 from chess.chess_board import ChessBoard
 from chess.chess_constants import MAPPING
-from chess.chess_ai import get_computer_move
 
 
-class Play2PState(TextsMixin, ButtonsMixin, BaseState):
+class Play2PState(AtlasMixin, TextsMixin, ButtonsMixin, BaseState):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._initialize_board_sizes()
         self._initialize_buttons(['Reset Board', 'Main Menu'])
-        self._generate_quads()
+        SPRITE_SHEET_PATH = os.path.join('assets', 'chess_sprite_sheet.png')
+        self._generate_quads(SPRITE_SHEET_PATH, 2, 6, self._tile_size, self._tile_size)
         self._cb = ChessBoard()
         self._tiles = []
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
@@ -30,16 +30,6 @@ class Play2PState(TextsMixin, ButtonsMixin, BaseState):
         self._board_height = self.params['screen_height'] - (2 * self._board_padding)
         self._tile_size = int(min(self._board_width / self._dim_width, self._board_height / self._dim_height))
         self._board_start = (self._board_padding, self._board_padding)
-    
-    def _generate_quads(self):
-        self._sprite_sheet = {}
-        SPRITE_SHEET_PATH = os.path.join('assets', 'chess_sprite_sheet.png')
-        img = pygame.image.load(SPRITE_SHEET_PATH)
-        self._img = pygame.transform.scale(img, (self._tile_size * 6, self._tile_size * 2))
-        t = self._tile_size
-        for i in range(2):
-            for j in range(6):
-                self._sprite_sheet[i * 6 + j + 1] = (t * j, t * i, t, t)
     
     def _get_event_board(self, event: pygame.event, extra_func=lambda: None):
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]

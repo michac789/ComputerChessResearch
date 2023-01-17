@@ -2,9 +2,31 @@ import pygame
 
 
 '''
+    AtlasMixin provide method to generate quads given an atlas sprite sheet.
+'''
+class AtlasMixin:
+    '''
+    From 'path', generate 'n_y' times 'n_x' quads, each of size 'size_y' and 'size_x'.
+    Store all the quads in 'self._sprite_sheet' dictionary numbered from 1 to 'n_y' times 'n_x'.
+    '''
+    def _generate_quads(self, path: str, n_y: int, n_x: int, size_y: int, size_x: int):
+        self._sprite_sheet = {}
+        SPRITE_SHEET_PATH = path
+        img = pygame.image.load(SPRITE_SHEET_PATH)
+        self._img = pygame.transform.scale(img, (size_x * n_x, size_y * n_y))
+        for i in range(n_y):
+            for j in range(n_x):
+                self._sprite_sheet[i * n_x + j + 1] = (size_x * j, size_y * i, size_x, size_y)
+
+
+'''
     TextsMixin provide method to easily add multiple texts on different coordinates.
 '''
 class TextsMixin:
+    '''
+    Display a list of texts, where each text consist of:
+    <text, pygame font, pygame color, x_coordinate, y_coordinate>.
+    '''
     def _display_texts(self, surf: pygame.surface, texts: list[tuple[str, type, type, int, int]]):
         for text in texts:
             new_text = text[1].render(text[0], True, text[2])

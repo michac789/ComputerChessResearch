@@ -11,8 +11,7 @@ class AtlasMixin:
     '''
     def _generate_quads(self, path: str, n_y: int, n_x: int, size_y: int, size_x: int):
         self._sprite_sheet = {}
-        SPRITE_SHEET_PATH = path
-        img = pygame.image.load(SPRITE_SHEET_PATH)
+        img = pygame.image.load(path)
         self._img = pygame.transform.scale(img, (size_x * n_x, size_y * n_y))
         for i in range(n_y):
             for j in range(n_x):
@@ -25,7 +24,7 @@ class AtlasMixin:
 class TextsMixin:
     '''
     Display a list of texts, where each text consist of:
-    <text, pygame font, pygame color, x_coordinate, y_coordinate>.
+    <text, pygame font, pygame color, x_coordinate, y_coordinate>
     '''
     def _display_texts(self, surf: pygame.surface, texts: list[tuple[str, type, type, int, int]]):
         for text in texts:

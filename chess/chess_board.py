@@ -47,9 +47,9 @@ class ChessBoard:
                 (Rook, player, row, 7),
                 *[(Pawn, player, row2, j) for j in range(8)],
             ])
-
         self.player = 0
         self.turn = 1
+        self.last_turn_with_capture_or_pawn_moved = 1
         self.piece_count = 32
         self.game_ended = False
     
@@ -101,6 +101,9 @@ class ChessBoard:
     def move_piece(self, i: int, j: int, p: int, q: int) -> None:
         pawns = self._get_pieces(self.player, 'PAWN')
         for pawn in pawns: pawn.allow_en_passant = False
+        if self.board[p][q] != PIECES['EMPTY_TILE'] or \
+                str(self.board[i][j]) in ['WP', 'BP']:
+            self.last_turn_with_capture_or_pawn_moved = self.turn
         if self.board[i][j].move(p, q, self.board):
             self.piece_count -= 1
         self._next_player()
@@ -130,14 +133,14 @@ class ChessBoard:
     If ended, return 0 (white wins) or 1 (black wins) or 2 (draw).
     '''
     def check_ended(self) -> int:
-        if not self._is_available_move() or self.piece_count <= 2:
+        if not self._is_available_move() or self.piece_count <= 2 or \
+                (self.turn - self.last_turn_with_capture_or_pawn_moved) == 50:
             self.game_ended = True
             return (self.player + 1) % 2 if self.is_king_checked()[0] else 2
         return -1
 
 '''
     TODO - uncompleted chess rules
-    draw after 3 consecutive repeated moves
-    draw 50 move rule
-    pawn promotion choose what to promote
+    draw after 3 consecutive repeated moves -> later need to store castling left / right and en passant to chess state
+    pawn promotion choose what to promote -> for now auto promote queen, later create ui to choose what to promote
 '''

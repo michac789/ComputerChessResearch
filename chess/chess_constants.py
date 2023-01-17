@@ -1,20 +1,4 @@
 PIECES = {
-    'WHITE_KING': '\u265A',
-    'BLACK_KING': '\u2654',
-    'WHITE_QUEEN': '\u265B',
-    'BLACK_QUEEN': '\u2655',
-    'WHITE_ROOK': '\u265C',
-    'BLACK_ROOK': '\u2656',
-    'WHITE_KNIGHT': '\u265E',
-    'BLACK_KNIGHT': '\u2658',
-    'WHITE_BISHOP': '\u265D',
-    'BLACK_BISHOP': '\u2657',
-    'WHITE_PAWN': '\u265F',
-    'BLACK_PAWN': '\u2659',
-    'EMPTY_TILE': '\u25FB',
-}
-
-PIECES = {
     'WHITE_KING': 'WK',
     'BLACK_KING': 'BK',
     'WHITE_QUEEN': 'WQ',

@@ -70,13 +70,13 @@ class Play2PState(AtlasMixin, TextsMixin, ButtonsMixin, BaseState):
                 start_y = self._board_start[1] + i * self._tile_size
                 rect = pygame.Rect(start_x, start_y, self._tile_size, self._tile_size)
                 col = (
-                    pygame.Color('pink') if (i, j) == self._marked_tile1 else
-                    pygame.Color('purple') if (i, j) == self._marked_tile2 else
                     pygame.Color('darkred') if (i, j) == self._checked_tile and self._winner != -1 else
                     pygame.Color('red') if (i, j) == self._checked_tile else
                     pygame.Color('green') if self._allowed_tiles[i][j] else
                     pygame.Color('yellow') if (i, j) == self._selected_tile else
                     pygame.Color('lightblue') if self._cb.allow_select_tile(i, j) and self._hovered_tiles[i][j] else
+                    pygame.Color('pink') if (i, j) == self._marked_tile1 else
+                    pygame.Color('purple') if (i, j) == self._marked_tile2 else
                     pygame.Color('white') if (i + j) % 2 == 0 else pygame.Color('grey')
                 )
                 pygame.draw.rect(screen, col, rect)

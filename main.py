@@ -1,5 +1,6 @@
 from states.state_machine import Game
 from states.menu_state import MenuState
+from states.play_state import PlayState
 from states.play_state import PlayState, PlayAIState
 import sys
 
@@ -11,4 +12,3 @@ states = {
     'quit': lambda **_: sys.exit(),
 }
 game = Game(states, 'menu')
-game.run()

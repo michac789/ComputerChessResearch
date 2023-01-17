@@ -1,13 +1,13 @@
 from states.state_machine import Game
 from states.menu_state import MenuState
-from states.play_state import PlayState
-from states.play_state import PlayState, PlayAIState
+from states.play2p_state import Play2PState
+from states.playai_state import PlayAIState
 import sys
 
 
 states = {
     'menu': lambda **kw: MenuState(**kw),
-    'play': lambda **kw: PlayState(**kw),
+    'play2p': lambda **kw: Play2PState(**kw),
     'playai': lambda **kw: PlayAIState(**kw),
     'quit': lambda **_: sys.exit(),
 }

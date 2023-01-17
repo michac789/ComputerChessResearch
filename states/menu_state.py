@@ -12,7 +12,7 @@ class MenuState(TextsMixin, ButtonsMixin, BaseState):
         super().get_event(event)
         self._get_event_buttons(event, callbacks={
             0: lambda: self._change_state_callback('playai'),
-            1: lambda: self._change_state_callback('play'),
+            1: lambda: self._change_state_callback('play2p'),
             2: lambda: self._change_state_callback('quit'),
         })
     

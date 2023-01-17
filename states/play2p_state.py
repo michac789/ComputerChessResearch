@@ -6,7 +6,7 @@ from chess.chess_constants import MAPPING
 from chess.chess_ai import get_computer_move
 
 
-class PlayState(TextsMixin, ButtonsMixin, BaseState):
+class Play2PState(TextsMixin, ButtonsMixin, BaseState):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._initialize_board_sizes()
@@ -18,6 +18,8 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
         self._selected_tile = None
         self._allowed_tiles = [[False for _ in range(8)] for _ in range(8)]
         self._checked_tile = None
+        self._marked_tile1 = None
+        self._marked_tile2 = None
         self._winner = -1 # -1 (no winner), 0 (white win), 1 (black win), 2 (draw)
     
     def _initialize_board_sizes(self):
@@ -39,7 +41,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
             for j in range(6):
                 self._sprite_sheet[i * 6 + j + 1] = (t * j, t * i, t, t)
     
-    def _get_event_board(self, event: pygame.event, is_ai: bool=False):
+    def _get_event_board(self, event: pygame.event, extra_func=lambda: None):
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         for i in range(self._dim_height):
             for j in range(self._dim_width):
@@ -59,13 +61,13 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                         self._winner = self._cb.check_ended()
                         checked, king_i, king_j = self._cb.is_king_checked()
                         self._checked_tile = (king_i, king_j) if checked else None
-                        if is_ai: self._computer_turn = True
+                        extra_func()
 
     def get_event(self, event: pygame.event):
         super().get_event(event)
         self._get_event_board(event)
         self._get_event_buttons(event, callbacks={
-            0: lambda: self._change_state_callback('play'),
+            0: lambda: self._change_state_callback('play2p'),
             1: lambda: self._change_state_callback('menu'),
         })
     
@@ -78,6 +80,8 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                 start_y = self._board_start[1] + i * self._tile_size
                 rect = pygame.Rect(start_x, start_y, self._tile_size, self._tile_size)
                 col = (
+                    pygame.Color('pink') if (i, j) == self._marked_tile1 else
+                    pygame.Color('purple') if (i, j) == self._marked_tile2 else
                     pygame.Color('darkred') if (i, j) == self._checked_tile and self._winner != -1 else
                     pygame.Color('red') if (i, j) == self._checked_tile else
                     pygame.Color('green') if self._allowed_tiles[i][j] else
@@ -121,23 +125,3 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
             (f'Pieces left = {self._cb.piece_count}', self.medium_font, pygame.Color('purple'),
             self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (7 / 15)),
         ])
-
-
-class PlayAIState(PlayState, BaseState):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._computer_turn = False
-
-    def _get_event_board(self, event: pygame.event, is_ai: bool=False):
-        if self._computer_turn:
-            self._cb.move_piece(*get_computer_move(self._cb))
-            self._computer_turn = False
-        super()._get_event_board(event, is_ai)
-
-    def get_event(self, event: pygame.event):
-        BaseState.get_event(self, event)
-        self._get_event_board(event, is_ai=True)
-        self._get_event_buttons(event, callbacks={
-            0: lambda: self._change_state_callback('playai'),
-            1: lambda: self._change_state_callback('menu'),
-        })

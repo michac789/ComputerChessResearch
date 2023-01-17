@@ -11,7 +11,7 @@ class MenuState(TextsMixin, ButtonsMixin, BaseState):
     def get_event(self, event: pygame.event):
         super().get_event(event)
         self._get_event_buttons(event, callbacks={
-            0: lambda: self._change_state_callback('play'),
+            0: lambda: self._change_state_callback('playai'),
             1: lambda: self._change_state_callback('play'),
             2: lambda: self._change_state_callback('quit'),
         })

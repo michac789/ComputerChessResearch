@@ -2,6 +2,7 @@ import pygame, os
 from states.base_state import BaseState
 from states.mixins import TextsMixin, ButtonsMixin
 from chess.chess_board import ChessBoard
+from chess.chess_ai import computer_lvl1
 from chess.chess_constants import MAPPING
 
 
@@ -38,7 +39,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
             for j in range(6):
                 self._sprite_sheet[i * 6 + j + 1] = (t * j, t * i, t, t)
     
-    def _get_event_board(self, event: pygame.event):
+    def _get_event_board(self, event: pygame.event, is_ai: bool=False):
         self._hovered_tiles = [[False for _ in range(8)] for _ in range(8)]
         for i in range(self._dim_height):
             for j in range(self._dim_width):
@@ -58,6 +59,7 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
                         self._winner = self._cb.check_ended()
                         checked, king_i, king_j = self._cb.is_king_checked()
                         self._checked_tile = (king_i, king_j) if checked else None
+                        if is_ai: self._computer_turn = True
 
     def get_event(self, event: pygame.event):
         super().get_event(event)
@@ -119,3 +121,23 @@ class PlayState(TextsMixin, ButtonsMixin, BaseState):
             (f'Pieces left = {self._cb.piece_count}', self.medium_font, pygame.Color('purple'),
             self.params['screen_width'] * (10 / 16), self.params['screen_height'] * (7 / 15)),
         ])
+
+
+class PlayAIState(PlayState, BaseState):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._computer_turn = False
+    
+    def _get_event_board(self, event: pygame.event, is_ai: bool=False):
+        if self._computer_turn:
+            self._cb.move_piece(*computer_lvl1(self._cb))
+            self._computer_turn = False
+        super()._get_event_board(event, is_ai)
+
+    def get_event(self, event: pygame.event):
+        BaseState.get_event(self, event)
+        self._get_event_board(event, is_ai=True)
+        self._get_event_buttons(event, callbacks={
+            0: lambda: self._change_state_callback('playai'),
+            1: lambda: self._change_state_callback('menu'),
+        })
